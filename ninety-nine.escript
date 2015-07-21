@@ -134,7 +134,7 @@ main(_) ->
 	io:format("17-1 ~w~n", [my_split(3, [a, b, c, d, e, f, g, h, i, j, k])]),
 	io:format("17-2 ~w~n", [my_split2(3, [a, b, c, d, e, f, g, h, i, j, k])]),
 	io:format("17-3 ~w~n", [my_split3(3, [a, b, c, d, e, f, g, h, i, j, k])]),
-
+	io:format("17-4 ~w~n", [my_split4(3, [a, b, c, d, e, f, g, h, i, j, k])]),
 
 % last-empty-op
 	io:format("").
@@ -258,7 +258,13 @@ my_split(A, N, [H|T]) -> my_split([H|A], N-1, T).
 % 17-2
 my_split2(N, A) -> [ lists:sublist(A, N), lists:nthtail(N, A)].
 
-% 17-3
+% 17-3 standart
 my_split3(N, A) ->
     {F, S} = lists:split(N, A),
     [F, S].
+
+% 17-4 non-recursive
+my_split4(0, A) -> [[], A];
+my_split4(N, [H|T]) ->
+    [H1, P1] = my_split4(N-1, T),
+    [[H|H1], P1].
