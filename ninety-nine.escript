@@ -132,6 +132,8 @@ main(_) ->
 % scala> split(3, List('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k))
 % res0: (List[Symbol], List[Symbol]) = (List('a, 'b, 'c),List('d, 'e, 'f, 'g, 'h, 'i, 'j, 'k))
 	io:format("17-1 ~w~n", [my_split(3, [a, b, c, d, e, f, g, h, i, j, k])]),
+	io:format("17-2 ~w~n", [my_split2(3, [a, b, c, d, e, f, g, h, i, j, k])]),
+	io:format("17-3 ~w~n", [my_split3(3, [a, b, c, d, e, f, g, h, i, j, k])]),
 
 
 % last-empty-op
@@ -249,4 +251,14 @@ my_drop(Acc, Num, N, [_H|T]) when Num == N -> my_drop(Acc, 1, N, T);
 my_drop(Acc, Num, N, [H|T]) -> my_drop([H|Acc], Num+1, N, T).
 
 % 17-1
-my_split(N, A) -> err_TODO.
+my_split(N, A) -> my_split([], N, A).
+my_split(A, 0, B) -> [lists:reverse(A), B];
+my_split(A, N, [H|T]) -> my_split([H|A], N-1, T).
+
+% 17-2
+my_split2(N, A) -> [ lists:sublist(A, N), lists:nthtail(N, A)].
+
+% 17-3
+my_split3(N, A) ->
+    {F, S} = lists:split(N, A),
+    [F, S].
