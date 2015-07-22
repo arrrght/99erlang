@@ -154,6 +154,40 @@ main(_) ->
 	io:format("19-1 ~w~n", [my_rotate(-2, [a, b, c, d, e, f, g, h, i, j, k])]),
 	io:format("19-2 ~w~n", [my_rotate2(3, [a, b, c, d, e, f, g, h, i, j, k])]),
 	io:format("19-2 ~w~n", [my_rotate2(-2, [a, b, c, d, e, f, g, h, i, j, k])]),
+% P20 (*) Remove the Kth element from a list.
+% Return the list and the removed element in a Tuple. Elements are numbered from 0.
+% Example:
+% scala> removeAt(1, List('a, 'b, 'c, 'd))
+% res0: (List[Symbol], Symbol) = (List('a, 'c, 'd),'b)
+	io:format("20-1 ~w~n", [my_remove_at(1, [a, b, c, d])]),
+	io:format("20-2 ~w~n", [my_remove_at2(1, [a, b, c, d])]),
+
+% P21 (*) Insert an element at a given position into a list.
+% Example:
+% scala> insertAt('new, 1, List('a, 'b, 'c, 'd))
+% res0: List[Symbol] = List('a, 'new, 'b, 'c, 'd)
+	io:format("21-1 ~w~n", [my_insert_at(new, 2, [a, b, c, d])]),
+	io:format("21-2 ~w~n", [my_insert_at2(new, 2, [a, b, c, d])]),
+
+% P22 (*) Create a list containing all integers within a given range.
+% Example:
+% scala> range(4, 9)
+% res0: List[Int] = List(4, 5, 6, 7, 8, 9)
+	io:format("22-1 ~w~n", [my_range(4,9)]),
+	io:format("22-2 ~w~n", [my_range2(4,9)]),
+
+% P23 (**) Extract a given number of randomly selected elements from a list.
+% Example:
+% scala> randomSelect(3, List('a, 'b, 'c, 'd, 'f, 'g, 'h))
+% res0: List[Symbol] = List('e, 'd, 'a)
+	io:format("23-1 ~w~n", [my_random_select(3, [a, b, c, d, f, g, h])]),
+
+% P24 (*) Lotto: Draw N different random numbers from the set 1..M.
+% Example:
+% scala> lotto(6, 49)
+% res0: List[Int] = List(23, 1, 17, 33, 21, 37)
+	io:format("24-1 ~w~n", [my_lotto(6, 49)]),
+	io:format("24-2 ~w~n", [my_lotto2(6, 49)]),
 
 % last-empty-op
 	io:format("").
@@ -317,3 +351,50 @@ my_rotate2(N, L) ->
             {A, B} = lists:split(N2, L),
             lists:append(B,A)
     end.
+
+% 20-1
+my_remove_at(N, L) -> my_remove_at(N, L, []).
+my_remove_at(0, [H|T], Res) -> {lists:append(Res,T), H};
+my_remove_at(N, [H|T], Res) -> my_remove_at(N-1, T, [H|Res]).
+
+% 20-2
+my_remove_at2(N, L) ->
+    {A,[H|T]} = lists:split(N, L),
+    {lists:append(A,T), H}.
+
+% 21-1
+my_insert_at(What, Pos, List) ->
+    {A, B} = lists:split(Pos, List),
+    lists:append(A, [What|B]).
+
+% 21-2
+my_insert_at2(What, Pos, List) -> my_insert_at2(What, Pos, List, []).
+my_insert_at2(What, 0, List, Ret) -> lists:append(lists:reverse(Ret), [What|List]);
+my_insert_at2(What, Pos, [Lh|Lt], Ret) -> my_insert_at2(What, Pos-1, Lt, [Lh|Ret]).
+
+% 22-1, skip lists:seq(From, To), TODO: unfoldr?
+my_range(From, To) -> err_TODO.
+
+% 22-2
+my_range2(From, To) -> my_range2(From, To, []).
+my_range2(From, To, Res) when From>To -> Res;
+my_range2(From, To, Res) -> my_range2(From, To-1, [To|Res]).
+
+% 23-1
+my_random_select(Num, List) ->
+    random:seed(erlang:now()),
+    my_random_select(Num, List, []).
+my_random_select(0, _List, Res) -> Res;
+my_random_select(Num, List, Res) ->
+    {A, B} = my_remove_at(random:uniform(length(List)-1), List),
+    my_random_select(Num-1, A, [B|Res]).
+
+% 24-1
+my_lotto(Num, Rand) ->
+    random:seed(erlang:now()),
+    my_lotto(Num, Rand, []).
+my_lotto(0, _Rand, Res) -> Res;
+my_lotto(Num, Rand, Res) -> my_lotto(Num-1, Rand, [random:uniform(Rand)|Res]).
+
+% 24-2
+my_lotto2(Num, Rand) -> my_random_select(Num, lists:seq(1, Rand)).
