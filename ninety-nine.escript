@@ -189,6 +189,23 @@ main(_) ->
 	io:format("24-1 ~w~n", [my_lotto(6, 49)]),
 	io:format("24-2 ~w~n", [my_lotto2(6, 49)]),
 
+% P25 (*) Generate a random permutation of the elements of a list.
+% Hint: Use the solution of problem P23.
+% Example:
+% scala> randomPermute(List('a, 'b, 'c, 'd, 'e, 'f))
+% res0: List[Symbol] = List('b, 'a, 'd, 'c, 'e, 'f)
+	io:format("25-1 ~w~n", [my_random_permute([a, b, c, d, e, f])]),
+	io:format("25-2 ~w~n", [my_random_permute2([a, b, c, d, e, f])]),
+
+% P26 (**) Generate the combinations of K distinct objects chosen from the N elements of a list.
+% In how many ways can a committee of 3 be chosen from a group of 12 people? We all know that there are C(12,3) = 220 possibilities (C(N,K)
+% denotes the well-known binomial coefficient). For pure mathematicians, this result may be great. But we want to really generate all
+% the possibilities.
+% Example:
+% scala> combinations(3, List('a, 'b, 'c, 'd, 'e, 'f))
+% res0: List[List[Symbol]] = List(List('a, 'b, 'c), List('a, 'b, 'd), List('a, 'b, 'e), ...
+	io:format("26-1 ~w~n", [my_combinations(3, [a, b, c, d, e, f])]),
+
 % last-empty-op
 	io:format("").
 
@@ -380,13 +397,16 @@ my_range2(From, To) -> my_range2(From, To, []).
 my_range2(From, To, Res) when From>To -> Res;
 my_range2(From, To, Res) -> my_range2(From, To-1, [To|Res]).
 
-% 23-1
+% 23-1 TODO
 my_random_select(Num, List) ->
     random:seed(erlang:now()),
     my_random_select(Num, List, []).
 my_random_select(0, _List, Res) -> Res;
 my_random_select(Num, List, Res) ->
-    {A, B} = my_remove_at(random:uniform(length(List)-1), List),
+    if
+        length(List)==1 -> [H|L]=List, {A, B} = {[], H};
+        true -> {A, B} = my_remove_at(random:uniform(length(List)-1), List)
+    end,
     my_random_select(Num-1, A, [B|Res]).
 
 % 24-1
@@ -398,3 +418,20 @@ my_lotto(Num, Rand, Res) -> my_lotto(Num-1, Rand, [random:uniform(Rand)|Res]).
 
 % 24-2
 my_lotto2(Num, Rand) -> my_random_select(Num, lists:seq(1, Rand)).
+
+% 25-1
+my_random_permute(List) -> my_random_select(length(List), List).
+
+% 25-2
+my_random_permute2(List) ->
+    random:seed(erlang:now()),
+    my_random_permute2(List, []).
+my_random_permute2([H|[]], Ret) -> [H|Ret];
+my_random_permute2(List, Ret) ->
+    Rand = random:uniform(length(List))-1,
+	io:format("~w - ~w~n", [Rand, List]),
+    {NewList, Num} = my_remove_at(Rand, List),
+    my_random_permute2(NewList, [Num|Ret]).
+
+% 26-1
+my_combinations(Num, List) -> err_TODO.
