@@ -136,6 +136,25 @@ main(_) ->
 	io:format("17-3 ~w~n", [my_split3(3, [a, b, c, d, e, f, g, h, i, j, k])]),
 	io:format("17-4 ~w~n", [my_split4(3, [a, b, c, d, e, f, g, h, i, j, k])]),
 
+% P18 (**) Extract a slice from a list.
+% Given two indices, I and K, the slice is the list containing the elements from and including the Ith element up to but not including the Kth element of the original list. Start counting the elements with 0.
+% Example:
+% scala> slice(3, 7, List('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k))
+% res0: List[Symbol] = List('d, 'e, 'f, 'g)
+	io:format("18-1 ~w~n", [my_slice(3, 7, [a, b, c, d, e, f, g, h, i, j, k])]),
+	io:format("18-2 ~w~n", [my_slice2(3, 7, [a, b, c, d, e, f, g, h, i, j, k])]),
+
+% P19 (**) Rotate a list N places to the left.
+% Examples:
+% scala> rotate(3, List('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k))
+% res0: List[Symbol] = List('d, 'e, 'f, 'g, 'h, 'i, 'j, 'k, 'a, 'b, 'c)
+% scala> rotate(-2, List('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k))
+% res1: List[Symbol] = List('j, 'k, 'a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i)
+	io:format("19-1 ~w~n", [my_rotate(3, [a, b, c, d, e, f, g, h, i, j, k])]),
+	io:format("19-1 ~w~n", [my_rotate(-2, [a, b, c, d, e, f, g, h, i, j, k])]),
+	io:format("19-2 ~w~n", [my_rotate2(3, [a, b, c, d, e, f, g, h, i, j, k])]),
+	io:format("19-2 ~w~n", [my_rotate2(-2, [a, b, c, d, e, f, g, h, i, j, k])]),
+
 % last-empty-op
 	io:format("").
 
@@ -268,3 +287,33 @@ my_split4(0, A) -> [[], A];
 my_split4(N, [H|T]) ->
     [H1, P1] = my_split4(N-1, T),
     [[H|H1], P1].
+
+% 18-1 recursive
+my_slice(Start, End, List) -> my_slice(Start, End, List, []).
+my_slice(0, 0, _, Res) -> lists:reverse(Res);
+my_slice(0, End, [H|T], Res) -> my_slice(0, End-1, T, [H|Res]);
+my_slice(Start, End, [_H|T], Res) -> my_slice(Start-1, End-1, T, Res).
+
+% 18-2 stupid
+my_slice2(Start, End, List) ->
+    {_, B} = lists:split(Start, List),
+    {C, _} = lists:split(End - Start, B),
+    C.
+
+% 19-1 recursive
+my_rotate(N, L) when N>0 -> my_rotate(left, N rem length(L), L);
+my_rotate(N, L) -> my_rotate(right, -N rem length(L), lists:reverse(L)).
+
+my_rotate(left, 0, L) -> L;
+my_rotate(right,0, L) -> lists:reverse(L);
+my_rotate(Dir, N, [H|T]) -> my_rotate(Dir, N-1, lists:append(T, [H])).
+
+% 19-2 no-cycle, from sample
+my_rotate2(N, L) ->
+    N2 = N rem length(L),
+    if
+        N2<0 -> my_rotate2(N2+length(L), L);
+        true ->
+            {A, B} = lists:split(N2, L),
+            lists:append(B,A)
+    end.
